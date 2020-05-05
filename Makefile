@@ -46,7 +46,7 @@ ker-run.dep data.dep update.dep update-CF.dep step-comp.dep step-comp-CF.dep dro
 	$(NVCC) $(ALL_CCFLAGS) $(NVCCFLAGS) $(GENCODE_FLAGS) -M $^ >$@ ;
 
 ifneq ($(filter clean,$(MAKECMDGOALS)),clean)
-include ker-run.dep data.dep update.dep update-CF.dep step-comp.dep step-comp-CF.dep drop.dep init.dep draw_im3D.dep
+include ker-run.dep data.dep update.dep update-CF.dep step-comp.dep step-comp-CF.dep drop.dep init.dep draw.dep
 endif
 
 ker-run.o data.o update.o updateConeFold.o steps.o stepsConeFold.o drop.o init.o draw_im3D.o:
