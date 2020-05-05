@@ -39,7 +39,7 @@ GENCODE_SM := -arch=sm_37
 NOG=e1
 else
 NVCC := nvcc -ccbin $(GCC) -O3  
-GENCODE_SM := -arch=sm_61
+GENCODE_SM := -arch=sm_70
 endif 
 
 CDEFS := $(foreach f, $(ALL_DEFS), $(if $($f),-D$f=$($f)))
