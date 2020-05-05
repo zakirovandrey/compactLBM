@@ -31,8 +31,8 @@ DROP_FILE = drop.cu
 INIT_FILE = init.cu
 DRAW_FILE = draw_im3D.cu
 
-ker-run.dep      ker-run.o        : $(DATA_FILE)
-data.dep         data.o           : $(RUN_FILE)
+ker-run.dep      ker-run.o        : $(RUN_FILE)
+data.dep         data.o           : $(DATA_FILE)
 update.dep       update.o         : $(UPDATE_FILE)
 update-CF.dep    updateConeFold.o : $(UPDATE_CONEFOLD_FILE)
 step-comp.dep    steps.o          : $(STEP_FILE)
