@@ -156,7 +156,7 @@ inline void free_byGPU(void* ptr) {
 template<class T> void whose_pointer(T* p) {
   printf("Pointer %p: \t",p); fflush(stdout);
   cudaPointerAttributes ptrAt; CHECK_ERROR(cudaPointerGetAttributes(&ptrAt, p));
-  #if CUDA_VERSION >= 10000
+  #if __CUDACC_VER_MAJOR__ >= 10
   if(ptrAt.type==cudaMemoryTypeHost  ) printf("|memoryType: Host     \t");
   if(ptrAt.type==cudaMemoryTypeDevice) printf("|memoryType: Device %d\t", ptrAt.device);
   #else
