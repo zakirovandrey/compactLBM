@@ -24,7 +24,7 @@ __global__ void __launch_bounds__(Nz) draw(float* buf) {
   int iy=blockIdx.y;
 
   float* pbuf=&buf[ix+gridDim.x*(iy+gridDim.y*iz)];
-  Cell cell = pars.data.get_cell_compact<0>(ix,iy,iz);
+  register Cell cell = pars.data.get_cell_compact<0>(ix,iy,iz);
   cell.updateRhoVel();
   ftype rho=0; rho=cell.rho;
   ftype3 vel=make_ftype3(0,0,0);

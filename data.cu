@@ -1,6 +1,5 @@
 #include "data.cuh"
 
-
 __host__ __device__ void Cell::updateRhoVel(){
   using namespace LBMconsts;
   vel = make_ftype3(0,0,0); rho=0;

@@ -17,7 +17,7 @@ struct Cell{
 template<int _Ns> struct Tile_t{
   static const int Ns=_Ns;
   ftype f[Cell::Qn*Ns*Ns*Ns];
-  char slump[ 32 - sizeof(f)/sizeof(ftype) % 32];
+  //char slump[ 32 - sizeof(f)/sizeof(ftype) % 32];
   __host__ __device__ Cell construct_cell(const int3 loc_crd) {
     const int Ns3 = Ns*Ns*Ns; 
     Cell c;
