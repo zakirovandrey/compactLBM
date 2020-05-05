@@ -39,7 +39,7 @@ step-comp.dep    steps.o          : $(STEP_FILE)
 step-comp-CF.dep stepsConeFold.o  : $(STEP_CONEFOLD_FILE)
 drop.dep         drop.o           : $(DROP_FILE)
 init.dep         init.o           : $(INIT_FILE)
-draw_im3D.dep    draw_im3D.o      : $(DRAW_FILE)
+draw.dep         draw_im3D.o      : $(DRAW_FILE)
 
 ker-run.dep data.dep update.dep update-CF.dep step-comp.dep step-comp-CF.dep drop.dep init.dep draw.dep:
 	@echo "\033[0;32m   ===== Building dependencies file for $(current_dir)/$^  \033[0m"
