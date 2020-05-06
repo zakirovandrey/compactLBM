@@ -3,6 +3,7 @@
 #include "phys.h"
 #include "data.cuh"
 #include "compact-steps.cuh"
+#include "lbm-steps.cuh"
 
 template<int parity>__global__ __launch_bounds__(CompStep::Nblk) void compactStep_base(){
   const int ix = blockIdx.x*CompStep::Nb.x+threadIdx.x;

@@ -3,6 +3,7 @@
 #include "phys.h"
 #include "data.cuh"
 #include "compact-steps.cuh"
+#include "lbm-steps.cuh"
 
 __device__ inline void load_store_cells_perimeter(const int3 crd0, ftype* fi_sh, const int shift){
   const int Nbsz=CompStep::Nbsz;
@@ -26,9 +27,15 @@ __device__ inline void load_store_cells_perimeter(const int3 crd0, ftype* fi_sh,
   const int NfaceCells = 3*Nbsz*Nbsz-3*Nbsz+1;
 
   #define USE_PRECALC_SHIFTS
+  const enum {UseIndArrSuccessively, UseIndArrSparsely} PreCalcArray
+     = UseIndArrSuccessively;
 
   #ifdef USE_PRECALC_SHIFTS
-  const int index = warp_id+(lane_id%(warpSize/2))*Nwarps; static_assert( NfaceCells <= Nwarps*warpSize/2 );
+  const int Nc4warp = (NfaceCells+Nwarps-1)/Nwarps;
+  const int index_seq_loop = warp_id*Nc4warp+lane_id%(warpSize/2); static_assert( Nc4warp <= warpSize/2 );
+  const int index_seq_warp = warp_id+(lane_id%(warpSize/2))*Nwarps; static_assert( NfaceCells <= Nwarps*warpSize/2 );
+  int index=0;
+  if(PreCalcArray==UseIndArrSuccessively) index = index_seq_loop; else if(PreCalcArray==UseIndArrSparsely) index = index_seq_warp;
   int _iface,_ix,_iy,_iz;
   if( index<Nbsz*Nbsz ) {
     _iface=0;
@@ -52,17 +59,33 @@ __device__ inline void load_store_cells_perimeter(const int3 crd0, ftype* fi_sh,
   int exch_giyLR = ( crd0.y+cycsh.y+_iy )%Ny;
   int exch_gizLR = ( crd0.z+cycsh.z+_iz )%Nz;
   int exch_glob_indLR = exch_gixLR + exch_giyLR*Nx + exch_gizLR*Nx*Ny;
-  for(int ind=warp_id, ilane=0, iface=0; ind<NfaceCells; ind+=Nwarps, ilane++) {
-    const int glob_indL = __shfl_sync(0xffffffff, exch_glob_indLR, ilane);
-    const int glob_indR = __shfl_sync(0xffffffff, exch_glob_indLR, ilane+warpSize/2);
-    const int ind_sh    = __shfl_sync(0xffffffff, exch_ind_sh   , ilane);
-    if(iq_l<Qn) {
-      const int iq=iq_l;
-      pars.data.tiles[glob_indL].f[iq] = fi_sh[ind_sh*Qn+iq];
-      fi_sh[ind_sh*Qn+iq] = pars.data.tiles[glob_indR].f[iq];
-    }
+  if(PreCalcArray==UseIndArrSuccessively) {
+      for(int indiq=warp_id*Nc4warp*Qn, iface=0; indiq<min((warp_id+1)*Nc4warp,NfaceCells)*Qn; indiq+=warpSize) {
+        const int ind=(indiq+lane_id)/Qn;
+        const int iq=(indiq+lane_id)%Qn;
+        const int ilane  = ind-warp_id*Nc4warp;
+
+        const int glob_indL = __shfl_sync(0xffffffff, exch_glob_indLR, ilane);
+        const int glob_indR = __shfl_sync(0xffffffff, exch_glob_indLR, ilane+warpSize/2);
+        const int ind_sh    = __shfl_sync(0xffffffff, exch_ind_sh   , ilane);
+        if( indiq+lane_id >= min( (warp_id+1)*Nc4warp,NfaceCells)*Qn ) break;
+
+        pars.data.tiles[glob_indL].f[iq] = fi_sh[ind_sh*Qn+iq];
+        fi_sh[ind_sh*Qn+iq] = pars.data.tiles[glob_indR].f[iq];
+      }
+  } else if(PreCalcArray==UseIndArrSparsely) {
+      for(int ind=warp_id, ilane=0, iface=0; ind<NfaceCells; ind+=Nwarps, ilane++) {
+        const int glob_indL = __shfl_sync(0xffffffff, exch_glob_indLR, ilane);
+        const int glob_indR = __shfl_sync(0xffffffff, exch_glob_indLR, ilane+warpSize/2);
+        const int ind_sh    = __shfl_sync(0xffffffff, exch_ind_sh   , ilane);
+        if(iq_l<Qn) {
+          const int iq=iq_l;
+          pars.data.tiles[glob_indL].f[iq] = fi_sh[ind_sh*Qn+iq];
+          fi_sh[ind_sh*Qn+iq] = pars.data.tiles[glob_indR].f[iq];
+        }
+      }
   }
-  #else
+ #else
   if(iq_l>=Qn) return;
   for(int ind=warp_id, iface=0; ind<NfaceCells; ind+=Nwarps) {
     if( ind>=Nbsz*Nbsz && ind<ind_b2 ) iface=1;

@@ -3,6 +3,7 @@
 #include "LBMconsts.cuh"
 #include "phys.h"
 #include "compact-steps.cuh"
+#include "lbm-steps.cuh"
 
 void debug_print();
 
