@@ -115,8 +115,8 @@ __device__ inline void load_store_cells_perimeter(const int3 crd0, ftype* fi_sh,
       //if(SlumpLength<2 || iq*2<Qn-0) fi_sh[indsh0+0] = fromGlobR.x;
       //if(SlumpLength<1 || iq*2<Qn-1) fi_sh[indsh0+1] = fromGlobR.y;
     }
-    __syncthreads();
-    /*const int Nc4blk=Nwarps*warpSize/Qn;
+    /*__syncthreads();
+    const int Nc4blk=Nwarps*warpSize/Qn;
     for(int indiq=thid,iter=0; iter<(NfaceCells-1)/Nc4blk+1; indiq+=Nc4blk*Qn, iter++) {
       if( thid>=Nc4blk*Qn || indiq>=NfaceCells*Qn ) break;
       const int iq = thid%Qn;
@@ -390,7 +390,7 @@ __device__ inline void coneFoldLoop(int3 gCrd, ftype* fi_sh){
   const int thid = threadIdx.x + threadIdx.y*CompStep::Nb.x + threadIdx.z*CompStep::Nb.x*CompStep::Nb.y;
   //const short thid = threadIdx.x;
   const short Nbs = CompStep::Nb.x*CompStep::Nb.y*CompStep::Nb.z;
-  if(thid>=Nbs) return;
+  if(thid>=CompStep::Nblk) return;
   /*short sh_index_p[Qn*2];
   for(int itt=0;itt<2;itt++) for(int iq=0; iq<Cell::Qn; iq++) {
     const char3 pbits3 = make_char3(crd_loc.x&1,crd_loc.y&1,crd_loc.z&1)^itt;
