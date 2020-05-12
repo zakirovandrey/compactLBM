@@ -1,5 +1,13 @@
-__device__ inline static void load_store_datablock(const int3 crd0, ftype* fi_sh, int ls, int shift=0){
-  const int thid = threadIdx.x + threadIdx.y*CompStep::Nb.x + threadIdx.z*CompStep::Nb.x*CompStep::Nb.y;
+#ifdef SHMEM_INDEXING_AOS
+#define SHMEM_INDEX(IQ, ICELL) ICELL*Qn+IQ
+#elif defined SHMEM_INDEXING_SOA
+#define SHMEM_INDEX(IQ, ICELL) IQ*Nbs+ICELL
+#else
+#error "UNKNOWN SHMEM INDEXING"
+#endif
+
+__device__ __noinline__ static void load_store_datablock(const int thid0, const int3 crd0, ftype* fi_sh, int ls, int shift=0){
+  for(int thid=thid0; thid<CompStep::Nb.x*CompStep::Nb.y*CompStep::Nb.z; thid+=blockDim.x*blockDim.y*blockDim.z) {
   const int Nbs = CompStep::Nb.x*CompStep::Nb.y*CompStep::Nb.z;
   const int Nwarps = Nbs/32;
   const int warp_id = thid/32;
@@ -19,10 +27,34 @@ __device__ inline static void load_store_datablock(const int3 crd0, ftype* fi_sh
       const int giy = ( crd0.y+iy_loc )%Ny;
       const int giz = ( crd0.z+iz_loc )%Nz;
       const int iq=iq_l;
-      if(ls==RW::Load ) fi_sh[ind_sh*Qn+iq] = pars.data.tiles[gix+giy*Nx+giz*Nx*Ny].f[iq];
-      if(ls==RW::Store) pars.data.tiles[gix+giy*Nx+giz*Nx*Ny].f[iq] = fi_sh[ind_sh*Qn+iq];
+      if(ls==RW::Load ) fi_sh[SHMEM_INDEX(iq, ind_sh)] = pars.data.tiles[gix+giy*Nx+giz*Nx*Ny].f[iq];
+      if(ls==RW::Store) pars.data.tiles[gix+giy*Nx+giz*Nx*Ny].f[iq] = fi_sh[SHMEM_INDEX(iq, ind_sh)];
     }
   }
+  }
+}
+
+__managed__ extern float* img_buf;
+__device__ static void save_image_arr(const int3 crdL, const int thid){
+  int3 crd_loc;
+  crd_loc.x = thid%CompStep::Nb.x;
+  crd_loc.y = thid/CompStep::Nb.x%CompStep::Nb.y;
+  crd_loc.z = thid/(CompStep::Nb.x*CompStep::Nb.y);
+  const int3 glob = crdL+crd_loc;
+  int it=pars.iStep+1;
+  if(glob.x/Nx>=1) it-= (glob.x/Nx);
+  if(glob.y/Ny>=1) it-= (glob.y/Ny);
+  if(glob.z/Nz>=1) it-= (glob.z/Nz);
+  const int gix = glob.x%Nx; 
+  const int giy = glob.y%Ny;
+  const int giz = glob.z%Nz;
+  register Cell cell = pars.data.get_cell_compact<0>(gix,giy,giz);
+  cell.updateRhoVel();
+  ftype rho=0; rho=cell.rho;
+  ftype3 vel=make_ftype3(0,0,0);
+  vel = cell.vel;
+ 
+  if(it==pars.iStep/4*4+1 || (DRAW_WAVEFRONT-1)) img_buf[gix+giy*Nx+giz*Nx*Ny] = rho-1; 
 }
 
 __forceinline__ __device__ void Cell::collision(){

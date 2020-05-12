@@ -19,6 +19,9 @@ typedef float ftype;
 typedef double ftype;
 #endif
 
+#define DRAW_WAVEFRONT 2
+
+//#define ENABLE_DEVICE_TIMERS
 
 static int CudaDevs;
 

@@ -18,12 +18,17 @@ const char* FuncStr[] = {
   "f0","f1","f2","f3","f4"
 };
 
+
 __global__ void __launch_bounds__(Nz) draw(float* buf) {
   int iz=threadIdx.x;
   int ix=blockIdx.x;
   int iy=blockIdx.y;
 
   float* pbuf=&buf[ix+gridDim.x*(iy+gridDim.y*iz)];
+  const int it = pars.data.it_arr[ix+iy*Nx+iz*Nx*Ny];
+  #ifdef DRAW_WAVEFRONT
+  return;
+  #endif
   register Cell cell = pars.data.get_cell_compact<0>(ix,iy,iz);
   cell.updateRhoVel();
   ftype rho=0; rho=cell.rho;
@@ -44,6 +49,9 @@ __global__ void __launch_bounds__(Nz) draw(float* buf) {
   }
 }
 void draw_all(){
+  #ifdef DRAW_WAVEFRONT
+  if(parsHost.iStep==0) 
+  #endif
   CHECK_ERROR( cudaMemset(parsHost.arr4im.Arr3Dbuf,0,((long long int)parsHost.arr4im.Nx)*parsHost.arr4im.Ny*parsHost.arr4im.Nz*sizeof(float)) );
   draw<<<dim3(parsHost.arr4im.Nx,parsHost.arr4im.Ny),parsHost.arr4im.Nz>>>(parsHost.arr4im.Arr3Dbuf);
   cudaDeviceSynchronize(); CHECK_ERROR( cudaGetLastError() );

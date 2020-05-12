@@ -42,6 +42,7 @@ struct PhysPars{
   ftype dx,dy,dz,dt;
   int StepIterPeriod;
   int Nt;
+  int MaxSteps;
   Source src;
 
   void set_drop_dir(std::string dir) {
@@ -56,6 +57,7 @@ struct PhysPars{
     tau=0.6;
     dtau=1./tau;
     Nt=2;
+    MaxSteps=1e9;
   }
   void MallocData();
   void setCell(int val, int x,int y);

@@ -10,6 +10,7 @@ struct AllParams{
   unsigned int nFunc;
   int checkFlag;
   int Nt;
+  int MaxSteps;
   int3 Nroot;
   int iStep;
   double curtime;
@@ -24,13 +25,8 @@ struct AllParamsHost: public AllParams {
     int ndevs=0; int curdev;
     CHECK_ERROR( cudaGetDevice(&curdev) );
     CHECK_ERROR( cudaGetDeviceCount(&ndevs) );
-    #ifdef DRAW_ONLY_LEVEL
     arr4im.reset(Nx, Ny, Nz);
     arr4im.BufSize = sizeof(float)*Nx*Ny*Nz;
-    #else
-    arr4im.reset(Nx, Ny, Nz);
-    arr4im.BufSize = sizeof(float)*Nx*Ny*Nz;
-    #endif
     CHECK_ERROR( cudaMallocHost((void**) (&arr4im.Arr3Dbuf), arr4im.BufSize) );
     CHECK_ERROR( cudaMemset(arr4im.Arr3Dbuf, 0, arr4im.BufSize) );
 //     CHECK_ERROR( cudaMallocHost((void**) (&arr4surf.Arr3Dbuf), arr4surf.BufSize) );

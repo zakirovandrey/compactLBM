@@ -34,6 +34,16 @@ void init(){
   copy2dev( parsHost, pars );
   copy2dev( PPhost, PPdev );
 
+  printf("Peak performance in 10^6 LU/s (normalized to locality coefficient), i.e. update one cell required one cell load + one store:\n");
+  const double memclocks[] = {6008, 4513, 1754};
+  const size_t memwidth[] = {384, 256, 4096};
+  const size_t datatrans = 2*Cell::Qn*sizeof(ftype);
+  printf("TitanX: %g | GTX1080: %g | TeslaV100(PCIe): %g \n", 
+      memclocks[0]*memwidth[0]/8/datatrans, 
+      memclocks[1]*memwidth[1]/8/datatrans, 
+      memclocks[2]*memwidth[2]/8/datatrans
+  );
+
 }
 
 template<class F> __global__ void fill(F func){

@@ -11,10 +11,9 @@ void Data_t::malloc_data(const int Nx, const int Ny, const int Nz){
   const int Ns3 = Tile::Ns*Tile::Ns*Tile::Ns; 
   const size_t sz = long(Nx)*Ny*Nz/Ns3*sizeof(Tile);
   printf("Total data size = %g GB\n",double(sz)/1024/1024/1024); 
-  CHECK_ERROR( cudaMalloc((void**)&tiles, sz ) );
-  CHECK_ERROR( cudaMallocHost((void**)&tilesHost, sz ) );
-  CHECK_ERROR( cudaMemset(tiles, 0, sz ) );
-  CHECK_ERROR( cudaMemset(tilesHost, 0, sz ) );
+  CHECK_ERROR( cudaMalloc((void**)&tiles, sz ) ); CHECK_ERROR( cudaMemset(tiles, 0, sz ) );
+  CHECK_ERROR( cudaMallocHost((void**)&tilesHost, sz ) ); CHECK_ERROR( cudaMemset(tilesHost, 0, sz ) );
+  CHECK_ERROR( cudaMalloc((void**)&it_arr, long(Nx)*Ny*Nz*sizeof(int) ) ); CHECK_ERROR( cudaMemset(it_arr, 0, long(Nx)*Ny*Nz*sizeof(int) ) );
 };
 void Data_t::copyHost2Dev(){
   const int Ns3 = Tile::Ns*Tile::Ns*Tile::Ns; 

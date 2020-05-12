@@ -542,5 +542,27 @@ inline __host__ __device__ char3 operator^(char3 a,char b) { return make_char3(a
 inline __host__ __device__ char3 operator>>(char a,char3 b) { return make_char3(a>>b.x, a>>b.y, a>>b.z); }
 inline __host__ __device__ char3 operator<<(char a,char3 b) { return make_char3(a<<b.x, a<<b.y, a<<b.z); }
 
+inline __host__ __device__ short3 operator+(short3 a,short3 b) { return make_short3(a.x + b.x, a.y + b.y, a.z + b.z); }
+inline __host__ __device__ short3 operator+(short3 a,short b) { return make_short3(a.x + b, a.y + b, a.z + b); }
+inline __host__ __device__ short3 operator+(short a,short3 b) { return make_short3(a + b.x, a + b.y, a + b.z); }
+inline __host__ __device__ short3 operator-(short3 a,short3 b) { return make_short3(a.x - b.x, a.y - b.y, a.z - b.z); }
+inline __host__ __device__ short3 operator-(short3 a,short b) { return make_short3(a.x - b, a.y - b, a.z - b); }
+inline __host__ __device__ short3 operator-(short a,short3 b) { return make_short3(a - b.x, a - b.y, a - b.z); }
+inline __host__ __device__ short3 operator*(short3 a,short3 b) { return make_short3(a.x * b.x, a.y * b.y, a.z * b.z); }
+inline __host__ __device__ short3 operator*(short3 a,short b) { return make_short3(a.x * b, a.y * b, a.z * b); }
+inline __host__ __device__ short3 operator*(short a,short3 b) { return make_short3(a * b.x, a * b.y, a * b.z); }
+inline __host__ __device__ short3 operator/(short3 a,short3 b) { return make_short3(a.x / b.x, a.y / b.y, a.z / b.z); }
+inline __host__ __device__ short3 operator/(short3 a,short b) { return make_short3(a.x / b, a.y / b, a.z / b); }
+inline __host__ __device__ short3 operator&(short3 a,short3 b) { return make_short3(a.x & b.x, a.y & b.y, a.z & b.z); }
+inline __host__ __device__ short3 operator&(short3 a,short b) { return make_short3(a.x & b, a.y & b, a.z & b); }
+inline __host__ __device__ short3 operator|(short3 a,short3 b) { return make_short3(a.x | b.x, a.y | b.y, a.z | b.z); }
+inline __host__ __device__ short3 operator^(short3 a,short3 b) { return make_short3(a.x ^ b.x, a.y ^ b.y, a.z ^ b.z); }
+inline __host__ __device__ short3 operator^(short3 a,short b) { return make_short3(a.x ^ b, a.y ^ b, a.z ^ b); }
+inline __host__ __device__ short3 operator>>(short a,short3 b) { return make_short3(a>>b.x, a>>b.y, a>>b.z); }
+inline __host__ __device__ short3 operator<<(short a,short3 b) { return make_short3(a<<b.x, a<<b.y, a<<b.z); }
+inline __host__ __device__ short3 operator%(short3 a,short3 b) { return make_short3(a.x % b.x, a.y % b.y, a.z % b.z); }
+template<class T> inline __host__ __device__ short3 operator%(short3 a, T b) { return make_short3(a.x % b, a.y % b, a.z % b); }
+
+
 
 #endif

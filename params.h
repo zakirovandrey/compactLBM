@@ -131,6 +131,40 @@ class cuTimer {
     return diflap;
   }
 };
+template<int _N> class cuDevTimers_N {
+  public:
+  static const int N=_N;
+  unsigned long long int clocks[N];
+  void reset() {
+    for(int i=0;i<N;i++) clocks[i]=0;
+  }
+  __device__ inline void add(unsigned long long int val, int it){
+    atomicAdd(&clocks[it], val);
+  }
+};
+typedef cuDevTimers_N<10> cuDevTimers;
+
+struct TimeCounter{
+  using CT = cuDevTimers;
+  unsigned long long int tstamps[CT::N+1];
+  int lap_counter=0;
+  CT* cuDtimers;
+  __device__ inline TimeCounter(CT& ct): lap_counter(0) {
+    #ifdef ENABLE_DEVICE_TIMERS
+    cuDtimers = &ct;
+    tstamps[0] = clock64();
+    #endif
+  }
+  __device__ inline void lap() {
+    #ifdef ENABLE_DEVICE_TIMERS
+    assert(lap_counter<cuDevTimers::N);
+    tstamps[lap_counter+1] = clock64();
+    auto difc = tstamps[lap_counter+1]-tstamps[lap_counter];
+    atomicAdd(&cuDtimers->clocks[lap_counter], difc);
+    lap_counter++;
+    #endif
+  }
+};
 
 template<class Ph, class Pd> static void copy2dev(Ph &hostP, Pd &devP) {
   if(CudaDevs>1) {

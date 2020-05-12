@@ -27,6 +27,7 @@ void AllParamsHost::set(){
   //PPhost.setUnits();
   sprintf(im3DHost.drop_dir, "%s", PPhost.drop_dir);
   Nt=PPhost.Nt;
+  MaxSteps=PPhost.MaxSteps;
 
   //if(Nx%(1<<MaxLevel)!=0) error(1,1,"Error: Nx must be dividable by %d\n", 1<<MaxLevel);
 }
@@ -73,7 +74,7 @@ try {
   cudaDeviceSynchronize(); CHECK_ERROR( cudaGetLastError() );
 
   if(test_only) {
-    while(true) {
+    while(parsHost.iStep<parsHost.MaxSteps) {
       tm.start();
       calcStep();
       double tCpu=tm.stop();

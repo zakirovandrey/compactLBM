@@ -32,7 +32,7 @@ template<int parity> __global__ __launch_bounds__(CompStep::Nblk) void compactSt
   //__shared__ ftype fi_sh[Nbs*Qn];
   extern __shared__ ftype fi_sh[];
   
-  load_store_datablock(make_int3(ix0,iy0,iz0), fi_sh, RW::Load);
+  load_store_datablock(thid, make_int3(ix0,iy0,iz0), fi_sh, RW::Load);
   //for(int iq=0; iq<Cell::Qn; iq++) fi_sh[thid*Qn+iq] = pars.data.tiles[ix+iy*Nx+iz*Nx*Ny].f[iq];
   __syncthreads();
 
@@ -60,7 +60,7 @@ template<int parity> __global__ __launch_bounds__(CompStep::Nblk) void compactSt
   }
 
   __syncthreads();
-  load_store_datablock(make_int3(ix0,iy0,iz0), fi_sh, RW::Store);
+  load_store_datablock(thid, make_int3(ix0,iy0,iz0), fi_sh, RW::Store);
   //for(int iq=0; iq<Cell::Qn; iq++) pars.data.tiles[ix+iy*Nx+iz*Nx*Ny].f[iq] = fi_sh[thid*Qn+iq];
 
 }

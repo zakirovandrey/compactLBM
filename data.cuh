@@ -16,7 +16,13 @@ struct Cell{
 
 template<int _Ns> struct Tile_t{
   static const int Ns=_Ns;
-  ftype f[Cell::Qn*Ns*Ns*Ns];
+    static const int Qn4 = (Cell::Qn-1)/4+1;
+    static const int Qn2 = (Cell::Qn-1)/2+1;
+  union {
+    ftype f[Cell::Qn*Ns*Ns*Ns];
+    ftype4 f4[Qn4*Ns*Ns*Ns];
+    ftype2 f2[Qn2*Ns*Ns*Ns];
+  };
   //char slump[ 32 - sizeof(f)/sizeof(ftype) % 32];
   __host__ __device__ Cell construct_cell(const int3 loc_crd) {
     const int Ns3 = Ns*Ns*Ns; 
@@ -32,11 +38,8 @@ typedef Tile_t<1> Tile;
 struct Data_t{
   Tile* tiles;
   Tile* tilesHost;
-  #ifdef __CUDA_ARCH__
-  __device__
-  #else
-  __host__
-  #endif
+  int* it_arr;
+  __host__  __device__
   Cell get_cell(const int ix, const int iy, const int iz) {
     Tile* ctile = &tiles[ ix/Tile::Ns + iy/Tile::Ns*(Nx/Tile::Ns) + iz/Tile::Ns*(Nx/Tile::Ns)*(Ny/Tile::Ns) ];
     return ctile->construct_cell( make_int3(ix,iy,iz)%Tile::Ns ); 
