@@ -150,29 +150,30 @@ struct TimeCounter{
   int lap_counter=0;
   CT* cuDtimers;
   #ifdef ENABLE_DEVICE_TIMERS
-  __device__ inline TimeCounter(CT& ct): lap_counter(0) {
+  __device__ __forceinline__ TimeCounter(CT& ct): lap_counter(0) {
     cuDtimers = &ct;
     tstamps[0] = clock64();
   }
-  __device__ inline void lap() {
+  __device__ __forceinline__ void lap() {
     assert(lap_counter<cuDevTimers::N);
     tstamps[lap_counter+1] = clock64();
     auto difc = tstamps[lap_counter+1]-tstamps[lap_counter];
     atomicAdd(&cuDtimers->clocks[lap_counter], difc);
     lap_counter++;
   }
-  __device__ inline void lap_pending() {
+  __device__ __forceinline__ void lap_pending(int ilap=-1) {
     assert(lap_counter<cuDevTimers::N);
-    tstamps[lap_counter+1] = clock64();
+    if(ilap==-1) ilap = lap_counter+1;
+    tstamps[ilap] = clock64();
     lap_counter++;
   }
-  __device__ inline void update_diffs(){
-    for(int ilap=0;ilap<lap_counter; ilap++) atomicAdd(&cuDtimers->clocks[ilap], tstamps[ilap+1]-tstamps[ilap]);
+  __device__ __forceinline__ void update_diffs(){
+    for(int ilap=0;ilap<CT::N && ilap<lap_counter; ilap++) atomicAdd(&cuDtimers->clocks[ilap], tstamps[ilap+1]-tstamps[ilap]);
   }
   #else
   __device__ inline TimeCounter(CT& ct): lap_counter(0) {  }
   __device__ inline void lap() {  }
-  __device__ inline void lap_pending() {  }
+  __device__ inline void lap_pending(int ilap =-1) {  }
   __device__ inline void update_diffs(){  }
   #endif
 };
