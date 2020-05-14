@@ -149,21 +149,32 @@ struct TimeCounter{
   unsigned long long int tstamps[CT::N+1];
   int lap_counter=0;
   CT* cuDtimers;
+  #ifdef ENABLE_DEVICE_TIMERS
   __device__ inline TimeCounter(CT& ct): lap_counter(0) {
-    #ifdef ENABLE_DEVICE_TIMERS
     cuDtimers = &ct;
     tstamps[0] = clock64();
-    #endif
   }
   __device__ inline void lap() {
-    #ifdef ENABLE_DEVICE_TIMERS
     assert(lap_counter<cuDevTimers::N);
     tstamps[lap_counter+1] = clock64();
     auto difc = tstamps[lap_counter+1]-tstamps[lap_counter];
     atomicAdd(&cuDtimers->clocks[lap_counter], difc);
     lap_counter++;
-    #endif
   }
+  __device__ inline void lap_pending() {
+    assert(lap_counter<cuDevTimers::N);
+    tstamps[lap_counter+1] = clock64();
+    lap_counter++;
+  }
+  __device__ inline void update_diffs(){
+    for(int ilap=0;ilap<lap_counter; ilap++) atomicAdd(&cuDtimers->clocks[ilap], tstamps[ilap+1]-tstamps[ilap]);
+  }
+  #else
+  __device__ inline TimeCounter(CT& ct): lap_counter(0) {  }
+  __device__ inline void lap() {  }
+  __device__ inline void lap_pending() {  }
+  __device__ inline void update_diffs(){  }
+  #endif
 };
 
 template<class Ph, class Pd> static void copy2dev(Ph &hostP, Pd &devP) {
