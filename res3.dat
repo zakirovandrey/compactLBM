@@ -1,0 +1,16 @@
+128
+7070.15 MLU/sec) | timings: 2429.87 
+256
+7193.88 MLU/sec) | timings: 4776.19 
+384
+7230.91 MLU/sec) | timings: 7127.62 
+512
+7242.69 MLU/sec) | timings: 9488.06 
+640
+7248.97 MLU/sec) | timings: 11849.81 
+768
+7251.66 MLU/sec) | timings: 14214.51 
+896
+7253.09 MLU/sec) | timings: 16580.35 
+1024
+7256.60 MLU/sec) | timings: 18939.79 

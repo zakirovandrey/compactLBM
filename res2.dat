@@ -1,0 +1,99 @@
+2
+1697.62 MLU/sec) | timings: 308.79 
+4
+2768.58 MLU/sec) | timings: 378.67 
+6
+3562.62 MLU/sec) | timings: 441.44 
+8
+4164.61 MLU/sec) | timings: 503.51 
+10
+4638.34 MLU/sec) | timings: 565.13 
+12
+4969.11 MLU/sec) | timings: 633.00 
+14
+5228.87 MLU/sec) | timings: 701.80 
+16
+5442.10 MLU/sec) | timings: 770.63 
+18
+5615.12 MLU/sec) | timings: 840.29 
+20
+5758.53 MLU/sec) | timings: 910.39 
+22
+5879.63 MLU/sec) | timings: 980.79 
+24
+5981.38 MLU/sec) | timings: 1051.79 
+26
+6070.23 MLU/sec) | timings: 1122.76 
+28
+6148.54 MLU/sec) | timings: 1193.74 
+30
+6215.17 MLU/sec) | timings: 1265.29 
+32
+6272.22 MLU/sec) | timings: 1337.36 
+40
+6443.49 MLU/sec) | timings: 1627.30 
+50
+6578.40 MLU/sec) | timings: 1992.39 
+60
+6677.10 MLU/sec) | timings: 2355.56 
+70
+6752.50 MLU/sec) | timings: 2717.47 
+80
+90
+6871.00 MLU/sec) | timings: 3433.65 
+100
+6914.18 MLU/sec) | timings: 3791.34 
+110
+6948.47 MLU/sec) | timings: 4149.89 
+120
+6973.26 MLU/sec) | timings: 4511.07 
+130
+6996.03 MLU/sec) | timings: 4871.09 
+140
+7017.22 MLU/sec) | timings: 5229.96 
+150
+7036.99 MLU/sec) | timings: 5587.78 
+160
+7053.39 MLU/sec) | timings: 5946.45 
+170
+7066.64 MLU/sec) | timings: 6306.27 
+180
+7074.81 MLU/sec) | timings: 6669.48 
+190
+7082.18 MLU/sec) | timings: 7032.72 
+200
+7089.49 MLU/sec) | timings: 7395.24 
+210
+7096.86 MLU/sec) | timings: 7756.92 
+220
+7104.16 MLU/sec) | timings: 8117.95 
+230
+7112.91 MLU/sec) | timings: 8476.52 
+240
+7117.80 MLU/sec) | timings: 8838.98 
+250
+7123.85 MLU/sec) | timings: 9199.47 
+260
+7129.26 MLU/sec) | timings: 9560.18 
+270
+7132.91 MLU/sec) | timings: 9922.80 
+280
+7137.56 MLU/sec) | timings: 10283.61 
+290
+7142.19 MLU/sec) | timings: 10643.99 
+300
+7147.17 MLU/sec) | timings: 11003.35 
+400
+7174.58 MLU/sec) | timings: 14615.08 
+500
+7193.90 MLU/sec) | timings: 18219.82 
+600
+7206.90 MLU/sec) | timings: 21824.35 
+700
+7213.91 MLU/sec) | timings: 25437.01 
+800
+7218.24 MLU/sec) | timings: 29053.46 
+900
+7221.59 MLU/sec) | timings: 32669.99 
+1000
+7225.49 MLU/sec) | timings: 36280.38 
